@@ -32,8 +32,16 @@ enabled_file_upload_message = os.environ.get(
 
 # Define your pages using st.Page with actual icons
 flowise = st.Page("pages_section/1_DA_Learning_Assistant.py", 
-                        title="DA Learning Assistant", 
+                        title="Chat with DALA", 
                         icon="📝")
+
+message = st.Page("pages_section/2_DA_Learning_Home.py", 
+                        title="Home and Info", 
+                        icon="🏠")
+
+feedback = st.Page("pages_section/3_DA_Learning_Feedback.py", 
+                        title="Report Error", 
+                        icon="📊")
 
 def generate_session_id():
     return str(uuid.uuid4())
@@ -207,7 +215,7 @@ def load_flowise_chat_screen(api_url, headers, assistant_title, assistant_messag
         process_user_input(user_msg, current_page)
 
 def login():
-    st.title("Revo Assistant")
+    st.title("DALA RevoU")
     st.text("Enter your credential")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
@@ -269,7 +277,7 @@ def main():
         
     if st.session_state['logged_in']:
         pg = st.navigation({
-            "Flowise": [flowise],
+            "Flowise": [message, flowise , feedback],
             "Logout": [st.Page(logout, title="Logout", icon="🚪")]
         })
     else:
