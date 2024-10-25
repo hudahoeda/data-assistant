@@ -31,8 +31,8 @@ enabled_file_upload_message = os.environ.get(
 )
 
 # Define your pages using st.Page with actual icons
-flowise = st.Page("pages_section/1_Flowise_TL.py", 
-                        title="TL Assistant", 
+flowise = st.Page("pages_section/1_DA_Learning_Assistant.py", 
+                        title="DA Learning Assistant", 
                         icon="📝")
 
 def generate_session_id():
