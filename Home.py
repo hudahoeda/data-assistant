@@ -194,12 +194,12 @@ def load_flowise_chat_screen(api_url, headers, assistant_title, assistant_messag
     # Main Logic Execution
     current_page = get_current_page()
 
-    # Initialize UI Components
-    st.sidebar.file_uploader(
-        "Upload a file if needed (txt, pdf, json)",  
-        type=["txt", "pdf", "json"],
-        disabled=st.session_state.get('in_progress', False),
-    )
+    # # Initialize UI Components
+    # st.sidebar.file_uploader(
+    #     "Upload a file if needed (txt, pdf, json)",  
+    #     type=["txt", "pdf", "json"],
+    #     disabled=st.session_state.get('in_progress', False),
+    # )
 
     initialize_chat_logs(current_page)
 
