@@ -46,27 +46,23 @@ def generate_response(prompt: str):
         )
     )
 
-    response = ""
     for chunk in completion:
         parsed_chunk = json.loads(chunk)
         if parsed_chunk['event'] == 'token' and parsed_chunk['data'] != '':
-            response += str(parsed_chunk['data'])
-            yield response
+            yield str(parsed_chunk['data'])  # Yield only the new chunk
 
-# Create a chat input field to allow the user to enter a message. This will display
-# automatically at the bottom of the page.
+# Create a chat input field
 if prompt := st.chat_input("What is up?"):
-
-    # Store and display the current prompt.
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Stream the response to the chat using `st.write_stream`, then store it in 
-    # session state.
+    # Stream the response
     response = ""
     with st.chat_message("assistant"):
+        response_placeholder = st.empty()
         for chunk in generate_response(prompt):
-            response = chunk
-            st.markdown(response)
+            response += chunk  # Accumulate chunks
+            response_placeholder.markdown(response)  # Update placeholder with accumulated response
+    
     st.session_state.messages.append({"role": "assistant", "content": response})
