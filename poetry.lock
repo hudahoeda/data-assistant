@@ -403,6 +403,20 @@ pycodestyle = ">=2.11.0,<2.12.0"
 pyflakes = ">=3.1.0,<3.2.0"
 
 [[package]]
+name = "flowise"
+version = "1.0.4"
+description = "Flowise SDK for Python to interact with the Flowise API."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "flowise-1.0.4-py3-none-any.whl", hash = "sha256:013767dbebcccb6540735723022a2474543c8ea3d73e46b957b759f14c46fd2d"},
+    {file = "flowise-1.0.4.tar.gz", hash = "sha256:a1a155787cda477402537af88f9dad8716ccc9b15b80ec80f68dd209c20f11b8"},
+]
+
+[package.dependencies]
+requests = ">=2.25.1"
+
+[[package]]
 name = "gitdb"
 version = "4.0.11"
 description = "Git Object Database"
@@ -1749,6 +1763,19 @@ PyYAML = ">=5.3.1"
 streamlit = ">=1.25.0"
 
 [[package]]
+name = "streamlit-theme"
+version = "0.58.0"
+description = "Easy customisation of Streamlit look and feel."
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "streamlit_theme-0.58.0.tar.gz", hash = "sha256:a192f3107592d3ebe946b2d3e15f98084aad03a05aaad25327e190133ef0b16e"},
+]
+
+[package.dependencies]
+streamlit = ">=0.58.0"
+
+[[package]]
 name = "tenacity"
 version = "9.0.0"
 description = "Retry code until it succeeds"
@@ -1909,4 +1936,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10 || ^3.11"
-content-hash = "f9594fe0cf38ecac895f7dfde3b61dda1be6ecf026bdd985d702fa0e88ade2fa"
+content-hash = "0e440ae42d5b946017010c18225e5f6c6f37a1a73cd9cef4fd954d043c94f5f4"
