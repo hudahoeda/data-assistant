@@ -40,7 +40,12 @@ def generate_response(prompt: str):
             chatflowId=flow_id,
             question=prompt,
             overrideConfig={
-                "sessionId": "session1234"
+                "sessionId": st.session_state['session_id'],  
+                "analytics": {
+                    "langFuse": {  
+                        "userId": st.session_state['username']
+                    }
+                }
             },
             streaming=True
         )
