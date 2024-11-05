@@ -1709,6 +1709,20 @@ files = [
 ]
 
 [[package]]
+name = "st-theme"
+version = "1.2.3"
+description = "A component that returns the active theme of the Streamlit app."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "st-theme-1.2.3.tar.gz", hash = "sha256:ca97aece1a48ded6e83fd742c27cb0851e1bce2100ab4b6c37c7b6e003b65b42"},
+    {file = "st_theme-1.2.3-py3-none-any.whl", hash = "sha256:0a54d9817dd5f8a6d7b0d071b25ae72eacf536c63a5fb97374923938021b1389"},
+]
+
+[package.dependencies]
+streamlit = ">=1.33"
+
+[[package]]
 name = "streamlit"
 version = "1.39.0"
 description = "A faster way to build and share data apps"
@@ -1761,19 +1775,6 @@ extra-streamlit-components = ">=0.1.70"
 PyJWT = ">=2.3.0"
 PyYAML = ">=5.3.1"
 streamlit = ">=1.25.0"
-
-[[package]]
-name = "streamlit-theme"
-version = "0.58.0"
-description = "Easy customisation of Streamlit look and feel."
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "streamlit_theme-0.58.0.tar.gz", hash = "sha256:a192f3107592d3ebe946b2d3e15f98084aad03a05aaad25327e190133ef0b16e"},
-]
-
-[package.dependencies]
-streamlit = ">=0.58.0"
 
 [[package]]
 name = "tenacity"
@@ -1936,4 +1937,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10 || ^3.11"
-content-hash = "0e440ae42d5b946017010c18225e5f6c6f37a1a73cd9cef4fd954d043c94f5f4"
+content-hash = "e1ffcc886df8ddfa4f8c738a51158c19ab513e65f3a27ba895dc05ceaf6a257b"
