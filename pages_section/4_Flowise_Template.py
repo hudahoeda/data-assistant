@@ -4,17 +4,25 @@ from flowise import Flowise, PredictionData
 import json
 
 # Flowise app base url
-base_url = os.environ.get('FLOWISE_ENDPOINT')
+base_url = os.environ.get('FLOWISE_BASE_URL')
+api_key = os.environ.get("FLOWISE_API_KEY")
 
 # Chatflow/Agentflow ID
-flow_id = os.environ.get("FLOW_ID", "abc")
+flow_id = os.environ.get("FLOW_ID")
 
 # Show title and description.
 st.title("💬 Flowise Streamlit Chat")
 st.write("This is a simple chatbot that uses Flowise Python SDK")
 
-# Create a Flowise client.
-client = Flowise(base_url=base_url)
+# Create options object with base_url
+class Options:
+    def __init__(self, base_url):
+        self.base_url = base_url
+
+# Create a Flowise client with options object
+client = Flowise(Options(base_url))  
+if api_key:
+    client.api_key = api_key
 
 # Create a session state variable to store the chat messages. This ensures that the
 # messages persist across reruns.
