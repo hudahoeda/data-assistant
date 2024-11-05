@@ -5,7 +5,6 @@ from streamlit_theme import st_theme
 
 # Get theme and background color with fallback
 theme = st_theme()
-print(theme)
 background_color = theme["backgroundColor"] if theme else "#0e1117", # Default to white
 
 # Create chatflow config
@@ -30,7 +29,7 @@ flowise_html = f"""
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
+            height: 100vh;
             overflow: hidden;
             background-color: {background_color};
         }}
@@ -49,8 +48,9 @@ flowise_html = f"""
         import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
         
         function initChat() {{
+            // Get the actual viewport height
+            const vh = window.innerHeight;
             const width = window.innerWidth;
-            const height = window.innerHeight;
             
             Chatbot.initFull({{
                 chatflowid: "2978f88d-31ba-4d0a-9f93-e1e0d24c34c2",
@@ -65,7 +65,7 @@ flowise_html = f"""
                         welcomeMessage: 'Hello! This is custom welcome message',
                         errorMessage: 'This is a custom error message',
                         backgroundColor: "{background_color}",
-                        height: height,
+                        height: vh,  // Use viewport height
                         width: width,
                         fontSize: 16,
                         botMessage: {{
@@ -91,11 +91,31 @@ flowise_html = f"""
             }})
         }}
 
+        // Initialize on load and resize
         initChat();
         window.addEventListener('resize', initChat);
+
+        // Send height to Streamlit
+        window.addEventListener('load', function() {{
+            window.parent.postMessage({{
+                type: 'setFrameHeight',
+                height: window.innerHeight
+            }}, '*');
+        }});
     </script>
 </body>
 </html>
 """
 
-components.html(flowise_html, height=1000, width=None)
+# Get viewport height using JavaScript
+js_code = """
+<script>
+    window.parent.document.querySelector('.stApp').style.height = '100vh';
+    var viewportHeight = window.innerHeight;
+    document.getElementById('flowise-container').style.height = viewportHeight + 'px';
+</script>
+"""
+
+# Combine the components
+st.markdown(js_code, unsafe_allow_html=True)
+components.html(flowise_html, height=650, width=None, scrolling=False)
