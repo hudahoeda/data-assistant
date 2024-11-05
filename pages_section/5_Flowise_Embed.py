@@ -51,7 +51,7 @@ flowise_html = f"""
                 theme: {{
                     chatWindow: {{
                         showTitle: true,
-                        title: 'Flowise Bot',
+                        title: 'DALA',
                         titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
                         showAgentMessages: true,
                         welcomeMessage: 'Hello! This is custom welcome message',
@@ -71,6 +71,12 @@ flowise_html = f"""
                             textColor: "#ffffff",
                             showAvatar: true,
                             avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png"
+                        }},
+                        footer: {{
+                            textColor: '#303235',
+                            text: 'Powered by',
+                            company: 'RevoU',
+                            companyLink: 'https://revou.co',
                         }}
                     }}
                 }}
