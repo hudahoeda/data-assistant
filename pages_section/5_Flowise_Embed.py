@@ -1,13 +1,19 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import json
+from streamlit_theme import st_theme
 
-# Create override config as JSON string
+# Get theme and background color with fallback
+theme = st_theme()
+print(theme)
+background_color = theme["backgroundColor"] if theme else "#0e1117", # Default to white
+
+# Create chatflow config
 chatflow_config = json.dumps({
-    "sessionId": st.session_state['session_id'],
+    "sessionId": st.session_state.get('session_id', ''),  # Using .get() for safety
     "analytics": {
         "langFuse": {
-            "userId": st.session_state['username']
+            "userId": st.session_state.get('username', '')  # Using .get() for safety
         }
     }
 })
@@ -26,10 +32,12 @@ flowise_html = f"""
             width: 100%;
             height: 100%;
             overflow: hidden;
+            background-color: {background_color};
         }}
         #flowise-container {{
             width: 100%;
             height: 100vh;
+            background-color: {background_color};
         }}
     </style>
 </head>
@@ -56,7 +64,7 @@ flowise_html = f"""
                         showAgentMessages: true,
                         welcomeMessage: 'Hello! This is custom welcome message',
                         errorMessage: 'This is a custom error message',
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "{background_color}",
                         height: height,
                         width: width,
                         fontSize: 16,
@@ -67,13 +75,13 @@ flowise_html = f"""
                             avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png"
                         }},
                         userMessage: {{
-                            backgroundColor: "#3B81F6",
+                            backgroundColor: "f7f8ff",
                             textColor: "#ffffff",
                             showAvatar: true,
                             avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png"
                         }},
                         footer: {{
-                            textColor: '#303235',
+                            textColor: '#ffffff',
                             text: 'Powered by',
                             company: 'RevoU',
                             companyLink: 'https://revou.co',
@@ -83,15 +91,11 @@ flowise_html = f"""
             }})
         }}
 
-        // Initialize on load
         initChat();
-
-        // Update on window resize
         window.addEventListener('resize', initChat);
     </script>
 </body>
 </html>
 """
 
-# Render with full width/height
 components.html(flowise_html, height=1000, width=None)
