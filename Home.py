@@ -43,6 +43,14 @@ feedback = st.Page("pages_section/3_DA_Learning_Feedback.py",
                         title="Report Error", 
                         icon="📊")
 
+flowise_template = st.Page("pages_section/4_Flowise_Template.py", 
+                        title="Flowise Chat", 
+                        icon="💬")
+
+flowise_embed = st.Page("pages_section/5_Flowise_Embed.py", 
+                        title="Flowise Embed", 
+                        icon="🔗")
+
 def generate_session_id():
     return str(uuid.uuid4())
 
@@ -277,7 +285,7 @@ def main():
         
     if st.session_state['logged_in']:
         pg = st.navigation({
-            "Flowise": [message, flowise , feedback],
+            "Flowise": [message, flowise , feedback, flowise_template, flowise_embed],
             "Logout": [st.Page(logout, title="Logout", icon="🚪")]
         })
     else:
