@@ -60,10 +60,10 @@ flowise_html = f"""
                     chatWindow: {{
                         showTitle: true,
                         title: 'DALA',
-                        titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
+                        titleAvatarSrc: 'https://cdn.prod.website-files.com/61af164800e38c4f53c60b4e/61af164800e38c11efc60b6d_RevoU.svg',
                         showAgentMessages: true,
-                        welcomeMessage: 'Hello! This is custom welcome message',
-                        errorMessage: 'This is a custom error message',
+                        welcomeMessage: 'Hello! DALA di sini siap membantu, perkenalkan namamu!',
+                        errorMessage: 'Wah, mohon maaf ada yang error nih. Coba lagi ya! atau coba reset chatnya 😅',
                         backgroundColor: "{background_color}",
                         height: vh,  // Use viewport height
                         width: width,
@@ -72,7 +72,7 @@ flowise_html = f"""
                             backgroundColor: "#f7f8ff",
                             textColor: "#303235",
                             showAvatar: true,
-                            avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png"
+                            avatarSrc: "https://cdn.prod.website-files.com/61af164800e38c4f53c60b4e/61af164800e38c11efc60b6d_RevoU.svg"
                         }},
                         userMessage: {{
                             backgroundColor: "f7f8ff",

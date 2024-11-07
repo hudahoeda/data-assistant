@@ -1,7 +1,7 @@
 import streamlit as st
 
-st.success("Pahami untuk menentukan asisten yang sesuai dengan kebutuhanmu!")
+st.info("Pahami Cara Menggunakan DALA!")
 
 st.markdown(
     """
-    ## Selamat datang di Revo AI Assistant! 👋""")
+    ## Selamat datang di Data Analytics Learning Assistant! 👋""")
