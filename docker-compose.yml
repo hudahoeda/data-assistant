@@ -6,4 +6,4 @@ services:
       dockerfile: ./Dockerfile
     env_file: .env
     ports:
-      - "11112:8502"
+      - "11111:8501"
