@@ -1,3 +1,9 @@
+[tool.poetry]
+name = "DALA"
+version = "0.1.0"
+description = "A data assistant project using Streamlit and OpenAI"
+authors = ["Huda <huda@revou.co>"]
+
 [tool.poetry.dependencies]
 python = "^3.10 || ^3.11"
 streamlit = "^1.40.0"
