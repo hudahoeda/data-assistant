@@ -224,7 +224,7 @@ def load_flowise_chat_screen(api_url, headers, assistant_title, assistant_messag
 
 def login():
     st.title("DALA RevoU")
-    st.text("Enter your credential")
+    st.markdown("For login, use the registered email in RevoU with your phone number with format `081xxx` as password")
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
     if st.button("Login"):
