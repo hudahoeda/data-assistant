@@ -31,9 +31,9 @@ enabled_file_upload_message = os.environ.get(
 )
 
 # Define your pages using st.Page with actual icons
-flowise = st.Page("pages_section/1_DA_Learning_Assistant.py", 
-                        title="Chat with DALA", 
-                        icon="📝")
+# flowise = st.Page("pages_section/1_DA_Learning_Assistant.py", 
+#                         title="Chat with DALA", 
+#                         icon="📝")
 
 message = st.Page("pages_section/2_DA_Learning_Home.py", 
                         title="Home and Info", 
@@ -43,9 +43,9 @@ feedback = st.Page("pages_section/3_DA_Learning_Feedback.py",
                         title="Report Error", 
                         icon="📊")
 
-# flowise_template = st.Page("pages_section/4_Flowise_Template.py", 
-#                         title="Flowise Chat", 
-#                         icon="💬")
+flowise_template = st.Page("pages_section/4_Flowise_Template.py", 
+                         title="Flowise Chat", 
+                         icon="💬")
 
 # flowise_embed = st.Page("pages_section/5_Flowise_Embed.py", 
 #                         title="Flowise Embed", 
@@ -285,7 +285,7 @@ def main():
         
     if st.session_state['logged_in']:
         pg = st.navigation({
-            "Flowise": [message, flowise , feedback],
+            "Flowise": [message, flowise_template, feedback],
             "Logout": [st.Page(logout, title="Logout", icon="🚪")]
         })
     else:
