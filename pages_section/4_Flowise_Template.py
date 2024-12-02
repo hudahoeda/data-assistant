@@ -20,7 +20,7 @@ class Options:
         self.base_url = base_url
 
 # Create a Flowise client with options object
-client = Flowise(Options(base_url))  
+client = Flowise(base_url)
 if api_key:
     client.api_key = api_key
 
