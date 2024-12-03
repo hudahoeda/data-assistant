@@ -2,32 +2,102 @@ import os
 import streamlit as st
 from flowise import Flowise, PredictionData
 import json
+from datetime import datetime
+from langfuse import Langfuse
+from functools import lru_cache
 
 # Flowise app base url
 base_url = os.environ.get('FLOWISE_BASE_URL')
 api_key = os.environ.get("FLOWISE_API_KEY")
 
+# Langfuse setup
+langfuse = Langfuse(
+    public_key=os.environ.get("LANGFUSE_PUBLIC_KEY"),
+    secret_key=os.environ.get("LANGFUSE_SECRET_KEY"),
+    host=os.environ.get("LANGFUSE_HOST", "https://cloud.langfuse.com")
+)
+
 # Chatflow/Agentflow ID
 flow_id = os.environ.get("FLOW_ID")
 
-# Show title and description.
+# Show title and description
 st.title("DALA")
 st.write("Data Analytics Learning Assistant")
 
-# Create options object with base_url
-class Options:
-    def __init__(self, base_url):
-        self.base_url = base_url
-
-# Create a Flowise client with options object
+# Create Flowise client
 client = Flowise(base_url)  
 if api_key:
     client.api_key = api_key
 
-# Create a session state variable to store the chat messages. This ensures that the
-# messages persist across reruns.
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def get_latest_session_id(username: str) -> str:
+    """
+    Get the latest session ID for a user from Langfuse
+    """
+    try:
+        # Get traces for the user without order parameter
+        traces = langfuse.get_traces(
+            user_id=username,
+            limit=1
+        )
+        if traces and len(traces) > 0:
+            return traces[0].session_id
+        return None
+    except Exception as e:
+        st.error(f"Error getting latest session ID: {str(e)}")
+        return None
+
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def get_session_chat_history(username: str, session_id: str):
+    """
+    Retrieve chat history from Langfuse for a specific session
+    """
+    try:
+        # Get traces for the specific session without order parameter
+        traces = langfuse.get_traces(
+            user_id=username,
+            session_id=session_id
+        )
+        
+        # Sort traces by timestamp if needed
+        traces = sorted(traces, key=lambda x: x.timestamp if hasattr(x, 'timestamp') else 0)
+        
+        messages = []
+        for trace in traces:
+            # Extract generations from trace
+            for generation in trace.generations:
+                if generation.input and generation.output:
+                    # Add user message
+                    messages.append({
+                        "role": "user",
+                        "content": generation.input
+                    })
+                    # Add assistant message
+                    messages.append({
+                        "role": "assistant",
+                        "content": generation.output
+                    })
+        
+        return messages
+    except Exception as e:
+        st.error(f"Error loading chat history from Langfuse: {str(e)}")
+        return []
+
+# Initialize chat messages with history from Langfuse
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    username = st.session_state.get('username')
+    if username:
+        # Get latest session ID
+        latest_session_id = get_latest_session_id(username)
+        if latest_session_id:
+            # Store the session ID for future use
+            st.session_state['flowise_session_id'] = latest_session_id
+            # Get chat history for this session
+            st.session_state.messages = get_session_chat_history(username, latest_session_id)
+        else:
+            st.session_state.messages = []
+    else:
+        st.session_state.messages = []
 
 # Display the existing chat messages via `st.chat_message`.
 for message in st.session_state.messages:
@@ -40,7 +110,7 @@ def generate_response(prompt: str):
             chatflowId=flow_id,
             question=prompt,
             overrideConfig={
-                "sessionId": st.session_state['session_id'],  
+                "sessionId": st.session_state.get('flowise_session_id'),  # Use existing session ID if available
                 "analytics": {
                     "langFuse": {  
                         "userId": st.session_state['username']
@@ -54,10 +124,15 @@ def generate_response(prompt: str):
     for chunk in completion:
         parsed_chunk = json.loads(chunk)
         if parsed_chunk['event'] == 'token' and parsed_chunk['data'] != '':
-            yield str(parsed_chunk['data'])  # Yield only the new chunk
+            yield str(parsed_chunk['data'])
 
 # Create a chat input field
 if prompt := st.chat_input("What is up?"):
+    # If we don't have a session ID yet, this must be a new session
+    if 'flowise_session_id' not in st.session_state:
+        # The first message will create a new session in Flowise
+        st.session_state.messages = []  # Start fresh for new session
+    
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -67,8 +142,8 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
         for chunk in generate_response(prompt):
-            response += chunk  # Accumulate chunks
-            response_placeholder.markdown(response)  # Update placeholder with accumulated response
+            response += chunk
+            response_placeholder.markdown(response)
     
     st.session_state.messages.append({"role": "assistant", "content": response})
 
