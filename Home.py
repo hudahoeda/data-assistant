@@ -12,6 +12,9 @@ from pyairtable import Api
 import time
 import uuid
 import requests
+import extra_streamlit_components as stx
+from datetime import datetime, timedelta
+from langfuse import Langfuse
 
 # Add these to your existing environment variable loading
 BASE_ID = os.environ.get('BASE_ID')
@@ -50,6 +53,13 @@ flowise_template = st.Page("pages_section/4_Flowise_Template.py",
 # flowise_embed = st.Page("pages_section/5_Flowise_Embed.py", 
 #                         title="Flowise Embed", 
 #                         icon="🔗")
+
+# Initialize Langfuse client
+langfuse = Langfuse(
+    public_key=os.environ.get("LANGFUSE_PUBLIC_KEY"),
+    secret_key=os.environ.get("LANGFUSE_SECRET_KEY"),
+    host=os.environ.get("LANGFUSE_HOST", "https://cloud.langfuse.com")
+)
 
 def generate_session_id():
     return str(uuid.uuid4())
@@ -222,7 +232,42 @@ def load_flowise_chat_screen(api_url, headers, assistant_title, assistant_messag
     if user_msg:
         process_user_input(user_msg, current_page)
 
+def get_cookie_manager():
+    return stx.CookieManager()
+
+def set_auth_cookie(cookie_manager, username):
+    # Set cookie to expire in 7 days
+    expiry = (datetime.now() + timedelta(days=7)).timestamp()
+    # Convert the float timestamp to a datetime object
+    expiry = datetime.fromtimestamp(expiry)
+    cookie_manager.set('auth_token', f"{username}|{expiry}", expires_at=expiry)
+
+def get_auth_cookie(cookie_manager):
+    auth_token = cookie_manager.get('auth_token')
+    if auth_token:
+        try:
+            username, expiry = auth_token.split('|')
+            if float(expiry) > datetime.now().timestamp():
+                return username
+        except:
+            pass
+    return None
+
 def login():
+    cookie_manager = get_cookie_manager()
+    
+    # Check if user is already logged in via cookie
+    auth_username = get_auth_cookie(cookie_manager)
+    if auth_username:
+        st.session_state['logged_in'] = True
+        st.session_state['username'] = auth_username
+        # Clear existing messages to force reload from Langfuse
+        if 'messages' in st.session_state:
+            del st.session_state.messages
+        if 'flowise_session_id' in st.session_state:
+            del st.session_state.flowise_session_id
+        return
+    
     st.title("DALA RevoU")
     st.markdown("For login, use the registered email in RevoU with your phone number with format `081xxx` as password")
     username = st.text_input("Username")
@@ -234,6 +279,8 @@ def login():
                 if verify_password(user['fields']['Password'], password):
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = username
+                    # Set auth cookie
+                    set_auth_cookie(cookie_manager, username)
                     st.success("Login successful!")
                     st.rerun()
                 else:
@@ -244,15 +291,14 @@ def login():
             st.error("User not found")
 
 def logout():
-    st.session_state['logged_in'] = False
-    st.session_state.pop('username', None)
-    st.session_state['chat_history'] = []
-    st.session_state['session_id'] = []
-    st.session_state['flowise_session_id'] = []
-    st.session_state.page_thread_ids = {}
-    st.session_state.page_chat_logs = {}
-    st.success("Logged out successfully!")
-    reset_chat()
+    cookie_manager = get_cookie_manager()
+    
+    # Check if cookie exists before deleting
+    if 'auth_token' in cookie_manager.cookies:
+        cookie_manager.delete('auth_token')
+    
+    # Clear session state
+    st.session_state.clear()
     st.rerun()
 
 def get_current_page_name(pg):
