@@ -11,8 +11,8 @@ api_key = os.environ.get("FLOWISE_API_KEY")
 flow_id = os.environ.get("FLOW_ID")
 
 # Show title and description.
-st.title("💬 Flowise Streamlit Chat")
-st.write("This is a simple chatbot that uses Flowise Python SDK")
+st.title("DALA")
+st.write("Data Analytics Learning Assistant")
 
 # Create options object with base_url
 class Options:
@@ -71,3 +71,34 @@ if prompt := st.chat_input("What is up?"):
             response_placeholder.markdown(response)  # Update placeholder with accumulated response
     
     st.session_state.messages.append({"role": "assistant", "content": response})
+
+# Move file uploader to sidebar
+with st.sidebar:
+    st.divider()
+    # Add file uploader widget with size limit (1MB = 1048576 bytes)
+    MAX_FILE_SIZE = 1048576  # 1MB in bytes
+
+    uploaded_file = st.file_uploader(
+        "Upload a file (Max 1MB)", 
+        type=["txt", "pdf", "csv", "json"],
+        help="Upload your document to chat about its contents",
+    )
+
+    # Handle uploaded file
+    if uploaded_file is not None:
+        # Check file size
+        if uploaded_file.size > MAX_FILE_SIZE:
+            st.error(f"File is too large! Maximum size is 1MB. Your file is {uploaded_file.size / 1048576:.2f}MB")
+        else:
+            # Display file details
+            file_details = {
+                "Filename": uploaded_file.name,
+                "File size": f"{uploaded_file.size / 1024:.2f} KB",
+                "File type": uploaded_file.type
+            }
+            st.write("File Details:", file_details)
+            
+            # Store in session state
+            if "uploaded_files" not in st.session_state:
+                st.session_state.uploaded_files = []
+            st.session_state.uploaded_files.append(uploaded_file)
