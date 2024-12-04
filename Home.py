@@ -2,6 +2,7 @@ import os
 import base64
 import re
 import json
+from datetime import datetime, timedelta
 
 import streamlit as st
 from openai import AssistantEventHandler
@@ -12,6 +13,7 @@ from pyairtable import Api
 import time
 import uuid
 import requests
+import extra_streamlit_components as stx
 
 # Add these to your existing environment variable loading
 BASE_ID = os.environ.get('BASE_ID')
@@ -222,7 +224,29 @@ def load_flowise_chat_screen(api_url, headers, assistant_title, assistant_messag
     if user_msg:
         process_user_input(user_msg, current_page)
 
+def get_cookie_manager():
+    return stx.CookieManager()
+
+def set_auth_cookie(cookie_manager, username):
+    # Set cookie to expire in 7 days
+    expiry = datetime.now() + timedelta(days=7)
+    cookie_manager.set('auth_token', username, expires_at=expiry)
+
+def clear_auth_cookie(cookie_manager):
+    cookie_manager.delete('auth_token')
+
 def login():
+    cookie_manager = get_cookie_manager()
+    
+    # Check if auth cookie exists
+    auth_token = cookie_manager.get('auth_token')
+    if auth_token:
+        user = get_user(auth_token)
+        if user:
+            st.session_state['logged_in'] = True
+            st.session_state['username'] = auth_token
+            return
+
     st.title("DALA RevoU")
     st.markdown("For login, use the registered email in RevoU with your phone number with format `081xxx` as password")
     username = st.text_input("Username")
@@ -234,6 +258,8 @@ def login():
                 if verify_password(user['fields']['Password'], password):
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = username
+                    # Set auth cookie upon successful login
+                    set_auth_cookie(cookie_manager, username)
                     st.success("Login successful!")
                     st.rerun()
                 else:
@@ -244,6 +270,9 @@ def login():
             st.error("User not found")
 
 def logout():
+    cookie_manager = get_cookie_manager()
+    clear_auth_cookie(cookie_manager)
+    
     st.session_state['logged_in'] = False
     st.session_state.pop('username', None)
     st.session_state['chat_history'] = []
