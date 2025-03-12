@@ -1,5 +1,6 @@
 import streamlit as st
 
+st.info('We are going to sunset the service on 17th March 2025, thank you for using our service!')
 st.markdown(
     """
     # **Welcome to DALA** 
